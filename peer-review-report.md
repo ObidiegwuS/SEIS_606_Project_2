@@ -65,7 +65,7 @@ This file explains what our AI agents are allowed to do, what requires human app
 
 ## 5. GitHub Pull Request
 
-**Pull Request:** To be added after creating the pull request.
+**Pull Request:** Pull Request #1: https://github.com/ObidiegwuS/SEIS_606_Project_2/pull/1
 
 We will use the pull request to show the differences between our original documentation and the revised versions.
 
