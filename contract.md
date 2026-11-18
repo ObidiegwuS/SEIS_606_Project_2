@@ -225,7 +225,7 @@ We will use GitHub pull requests to preserve a reviewable history of changes.
 
 | Version | Date | Author | Changes |
 |---|---|---|---|
-| 0.1 | November 18, 2026 | Ezana Asfaw | Created initial Bake-off contract with shared requirements, roles, fairness rules, acceptance tests, and evaluation criteria. |
-| 0.2 | November 18, 2026 | Ezana Asfaw (draft for team review) | Clarified partner responsibilities and AI oversight, aligned acceptance tests with the revised specification, expanded repository workflow, added contract-compliance checks, and clarified the comparison and decision-making process following Adam and Ryan's peer review. |
+| 0.1 | November 18, 2026 | Ezana & Uchenna| Created initial Bake-off contract with shared requirements, roles, fairness rules, acceptance tests, and evaluation criteria. |
+| 0.2 | November 18, 2026 | Ezana & Uchenna| Clarified partner responsibilities and AI oversight, aligned acceptance tests with the revised specification, expanded repository workflow, added contract-compliance checks, and clarified the comparison and decision-making process following Adam and Ryan's peer review. |
 
 We will review this revised contract together before treating it as the final agreed version.
