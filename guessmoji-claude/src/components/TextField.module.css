@@ -1,0 +1,37 @@
+.field { display: flex; flex-direction: column; gap: 0.375rem; }
+.label { font-weight: 600; font-size: 0.95rem; }
+.hint { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
+.control { position: relative; }
+.input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 0.875rem;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem; /* 16px prevents iOS zoom on focus */
+}
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
+.withToggle { padding-right: 4.5rem; }
+.invalid { border-color: var(--danger); }
+.invalid:focus { box-shadow: 0 0 0 3px var(--danger-soft); }
+.toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.375rem;
+  transform: translateY(-50%);
+  min-height: 36px;
+  padding: 0 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--accent-text);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.toggle:hover { background: var(--accent-soft); }
+.error { margin: 0; color: var(--danger-text); font-size: 0.875rem; font-weight: 500; }

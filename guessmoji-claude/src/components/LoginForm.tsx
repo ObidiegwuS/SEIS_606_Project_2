@@ -1,0 +1,57 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { login } from "@/lib/auth/client";
+import { safeRedirectPath, validateLogin } from "@/lib/validation";
+import { Button } from "./Button";
+import { FormAlert } from "./FormAlert";
+import { TextField } from "./TextField";
+import { useAuthForm } from "./useAuthForm";
+import styles from "./AuthForm.module.css";
+
+type LoginFormProps = {
+  /** Where to go after a successful login. Must be a relative path. */
+  redirectTo?: string;
+  /** Message shown above the form, e.g. after registering. */
+  notice?: string;
+};
+
+export function LoginForm({ redirectTo, notice }: LoginFormProps) {
+  const router = useRouter();
+  const { formRef, field, formError, submitting, onSubmit } = useAuthForm({
+    initialValues: { email: "", password: "" },
+    validate: validateLogin,
+    submit: login,
+    onSuccess: () => {
+      router.replace(safeRedirectPath(redirectTo));
+      router.refresh();
+    },
+  });
+
+  return (
+    <form ref={formRef} className={styles.form} onSubmit={onSubmit} noValidate aria-label="Log in">
+      {notice && !formError && <FormAlert tone="success">{notice}</FormAlert>}
+      {formError && <FormAlert tone="error">{formError}</FormAlert>}
+      <TextField
+        label="Email"
+        type="email"
+        autoComplete="email"
+        inputMode="email"
+        spellCheck={false}
+        required
+        {...field("email")}
+      />
+      <TextField
+        label="Password"
+        type="password"
+        autoComplete="current-password"
+        required
+        revealable
+        {...field("password")}
+      />
+      <Button type="submit" fullWidth loading={submitting} loadingText="Logging in…">
+        Log In
+      </Button>
+    </form>
+  );
+}
