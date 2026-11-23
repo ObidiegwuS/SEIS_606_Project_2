@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   normalizeEmail,
+  PASSWORD_REQUIREMENTS,
   safeRedirectPath,
   validateEmail,
   validateLogin,
@@ -31,13 +32,28 @@ describe("normalizeEmail", () => {
 });
 
 describe("validateNewPassword", () => {
-  it("enforces length and character rules", () => {
+  it("requires 7+ chars, upper, lower, and a special character", () => {
     expect(validateNewPassword("")).toBeDefined();
-    expect(validateNewPassword("abc12")).toMatch(/at least 8/);
-    expect(validateNewPassword("abcdefgh")).toMatch(/letter and one number/);
-    expect(validateNewPassword("12345678")).toMatch(/letter and one number/);
-    expect(validateNewPassword("a".repeat(128) + "1")).toMatch(/128/);
-    expect(validateNewPassword("emoji4ever")).toBeUndefined();
+    expect(validateNewPassword("Ab!cde")).toBeDefined(); // 6 chars
+    expect(validateNewPassword("abcdef!")).toBeDefined(); // no uppercase
+    expect(validateNewPassword("ABCDEF!")).toBeDefined(); // no lowercase
+    expect(validateNewPassword("Abcdefg")).toBeDefined(); // no special
+    expect(validateNewPassword("Ab cdefg")).toBeDefined(); // space is not a special character
+    expect(validateNewPassword("A!" + "a".repeat(127))).toMatch(/128/);
+  });
+  it("accepts valid passwords, with or without numbers", () => {
+    expect(validateNewPassword("Abcdef!")).toBeUndefined(); // exactly 7, no digits
+    expect(validateNewPassword("Emoji#2026")).toBeUndefined();
+    for (const ch of "!@#$%&*") expect(validateNewPassword(`Abcdef${ch}`), ch).toBeUndefined();
+  });
+});
+
+describe("PASSWORD_REQUIREMENTS", () => {
+  it("reports each rule independently", () => {
+    const met = (p: string) => PASSWORD_REQUIREMENTS.filter((r) => r.test(p)).map((r) => r.id);
+    expect(met("")).toEqual([]);
+    expect(met("a")).toEqual(["lower"]);
+    expect(met("Abcdef!")).toEqual(["length", "upper", "lower", "special"]);
   });
 });
 
@@ -49,8 +65,8 @@ describe("form validators", () => {
   it("registration requires matching passwords", () => {
     const errors = validateRegistration({
       email: "player@example.com",
-      password: "emoji4ever",
-      confirmPassword: "emoji4evr",
+      password: "Emoji#2026",
+      confirmPassword: "Emoji#2025",
     });
     expect(errors).toEqual({ confirmPassword: "Passwords do not match." });
   });

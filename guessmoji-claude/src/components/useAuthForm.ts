@@ -21,6 +21,7 @@ export function useAuthForm<F extends string>({ initialValues, validate, submit,
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState<FieldErrors<F>>({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [formErrorCode, setFormErrorCode] = useState<string | undefined>();
   const [submitting, setSubmitting] = useState(false);
   const [attempted, setAttempted] = useState(false);
   const [focusTick, setFocusTick] = useState(0);
@@ -50,6 +51,7 @@ export function useAuthForm<F extends string>({ initialValues, validate, submit,
     if (submitting) return;
     setAttempted(true);
     setFormError(null);
+    setFormErrorCode(undefined);
 
     const found = validate(values);
     setErrors(found);
@@ -66,6 +68,7 @@ export function useAuthForm<F extends string>({ initialValues, validate, submit,
     }
     setSubmitting(false);
     setFormError(result.message);
+    setFormErrorCode(result.code);
     if (result.fieldErrors && Object.keys(result.fieldErrors).length > 0) {
       setErrors(result.fieldErrors);
       setFocusTick((t) => t + 1);
@@ -80,5 +83,5 @@ export function useAuthForm<F extends string>({ initialValues, validate, submit,
     onBlur,
   });
 
-  return { formRef, field, formError, submitting, onSubmit };
+  return { formRef, field, values, formError, formErrorCode, submitting, onSubmit };
 }

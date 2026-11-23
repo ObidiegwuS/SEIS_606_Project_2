@@ -1,1 +1,5 @@
 .form { display: flex; flex-direction: column; gap: 1.125rem; }
+.alt { margin: 0; text-align: center; color: var(--text-muted); font-size: 0.95rem; }
+.alt a { color: var(--accent-text); font-weight: 600; }
+.forgot { margin: -0.5rem 0 0; text-align: right; font-size: 0.9rem; }
+.forgot a { color: var(--accent-text); font-weight: 600; }

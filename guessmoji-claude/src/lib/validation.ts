@@ -3,7 +3,7 @@
  * These are a usability aid only — the backend must re-validate every request.
  */
 
-export const PASSWORD_MIN_LENGTH = 8;
+export const PASSWORD_MIN_LENGTH = 7;
 export const PASSWORD_MAX_LENGTH = 128;
 export const EMAIL_MAX_LENGTH = 254;
 
@@ -30,14 +30,26 @@ export function validateLoginPassword(password: string): string | undefined {
   return undefined;
 }
 
+/** Any character that is not a letter, digit, or whitespace, e.g. ! @ # $ % & * */
+const SPECIAL_CHAR = /[^A-Za-z0-9\s]/;
+
+/**
+ * Password rules, in display order. Shown as a live checklist under the
+ * password field and enforced again on the server.
+ */
+export const PASSWORD_REQUIREMENTS = [
+  { id: "length", label: `At least ${PASSWORD_MIN_LENGTH} characters`, test: (p: string) => p.length >= PASSWORD_MIN_LENGTH },
+  { id: "upper", label: "One uppercase letter (A–Z)", test: (p: string) => /[A-Z]/.test(p) },
+  { id: "lower", label: "One lowercase letter (a–z)", test: (p: string) => /[a-z]/.test(p) },
+  { id: "special", label: "One special character (e.g. ! @ # $ % & *)", test: (p: string) => SPECIAL_CHAR.test(p) },
+] as const;
+
 export function validateNewPassword(password: string): string | undefined {
   if (!password) return "Create a password.";
-  if (password.length < PASSWORD_MIN_LENGTH)
-    return `Password must be at least ${PASSWORD_MIN_LENGTH} characters.`;
   if (password.length > PASSWORD_MAX_LENGTH)
     return `Password must be ${PASSWORD_MAX_LENGTH} characters or fewer.`;
-  if (!/[A-Za-z]/.test(password) || !/\d/.test(password))
-    return "Password must include at least one letter and one number.";
+  const unmet = PASSWORD_REQUIREMENTS.filter((r) => !r.test(password));
+  if (unmet.length > 0) return "Password does not meet all of the requirements below.";
   return undefined;
 }
 
@@ -49,6 +61,7 @@ export function validateConfirmPassword(password: string, confirm: string): stri
 
 export type LoginFields = "email" | "password";
 export type RegisterFields = "email" | "password" | "confirmPassword";
+export type ResetFields = "password" | "confirmPassword";
 
 export function validateLogin(values: Record<LoginFields, string>): FieldErrors<LoginFields> {
   return compact({
@@ -62,6 +75,13 @@ export function validateRegistration(
 ): FieldErrors<RegisterFields> {
   return compact({
     email: validateEmail(values.email),
+    password: validateNewPassword(values.password),
+    confirmPassword: validateConfirmPassword(values.password, values.confirmPassword),
+  });
+}
+
+export function validatePasswordReset(values: Record<ResetFields, string>): FieldErrors<ResetFields> {
+  return compact({
     password: validateNewPassword(values.password),
     confirmPassword: validateConfirmPassword(values.password, values.confirmPassword),
   });

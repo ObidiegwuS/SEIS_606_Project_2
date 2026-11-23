@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, useId, useState, type InputHTMLAttributes } from "react";
+import { forwardRef, useId, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import styles from "./TextField.module.css";
 
 type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id"> & {
@@ -10,10 +10,14 @@ type TextFieldProps = Omit<InputHTMLAttributes<HTMLInputElement>, "id"> & {
   hint?: string;
   /** Adds a show/hide toggle for password inputs. */
   revealable?: boolean;
+  /** Extra content rendered under the input (e.g. a requirements list). */
+  children?: ReactNode;
+  /** id of extra content the input should be described by. */
+  describedById?: string;
 };
 
 export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function TextField(
-  { label, name, error, hint, type = "text", revealable, ...rest },
+  { label, name, error, hint, type = "text", revealable, children, describedById, ...rest },
   ref,
 ) {
   const id = `${name}-${useId()}`;
@@ -40,7 +44,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
           type={inputType}
           className={`${styles.input} ${error ? styles.invalid : ""} ${revealable ? styles.withToggle : ""}`}
           aria-invalid={error ? true : undefined}
-          aria-describedby={[hintId, errorId].filter(Boolean).join(" ") || undefined}
+          aria-describedby={[hintId, errorId, describedById].filter(Boolean).join(" ") || undefined}
           {...rest}
         />
         {revealable && (
@@ -60,6 +64,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(function T
           {error}
         </p>
       )}
+      {children}
     </div>
   );
 });

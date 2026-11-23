@@ -4,8 +4,8 @@
 **Project:** Project 2  
 **Team Members:** Ezana Asfaw and Uchenna Obidiegwu  
 **Project Approach:** Platform Bake-off  
-**Version:** 0.2 – Peer Review Draft  
-**Date:** November 18, 2026
+**Version:** 0.3 – Proposed Update (pending team review)  
+**Date:** November 23, 2026
 
 ## 1. Project Overview
 
@@ -37,7 +37,7 @@ Both versions must follow the same specification.
 
 | ID | Required Feature |
 |---|---|
-| F1 | Users can register, log in, and log out. |
+| F1 | Users can register, verify their email address, log in, and log out. |
 | F2 | Users can select Movies or Countries. |
 | F3 | The game displays emoji clues for players to solve. |
 | F4 | Users can enter and submit answers. |
@@ -45,8 +45,10 @@ Both versions must follow the same specification.
 | F6 | Players earn points for correct answers without receiving duplicate points for completed puzzles. |
 | F7 | Scores and progress are saved between sessions. |
 | F8 | Players can use text hints for unclear puzzles. |
+| F9 | Registration enforces the shared password requirements, and only accounts with a verified email address can log in. |
+| F10 | Accounts are locked for 24 hours after 3 failed login attempts, and users can reset a forgotten password by email. |
 
-Both applications must also follow the answer-validation rules and data requirements described in `spec.md`.
+Both applications must also follow the account rules, answer-validation rules, and data requirements described in `spec.md`.
 
 ## 4. Fairness Rules
 
@@ -79,9 +81,9 @@ We updated our acceptance tests to match the revised specification and address a
 
 | Test | Action | Expected Result |
 |---|---|---|
-| AT-01 | Register with valid information | Account is created successfully. |
+| AT-01 | Register with valid information | Account is created as unverified and a verification email is sent. |
 | AT-02 | Register with an existing email | Duplicate account is rejected. |
-| AT-03 | Log in with valid credentials | User can access their account. |
+| AT-03 | Log in with valid credentials for a verified account | User can access their account. |
 | AT-04 | Log in with incorrect credentials | Login is rejected with an appropriate message. |
 | AT-05 | Select Movies | Movie emoji puzzles appear. |
 | AT-06 | Select Countries | Country emoji puzzles appear. |
@@ -92,6 +94,13 @@ We updated our acceptance tests to match the revised specification and address a
 | AT-11 | Attempt to earn points again for a completed puzzle | Duplicate points are not awarded. |
 | AT-12 | Log out and log back in | Saved scores and progress remain available. |
 | AT-13 | Attempt to access another user's private progress | Access is denied. |
+| AT-14 | Register with a password that does not meet the password requirements | Registration is rejected and the unmet requirements are shown. |
+| AT-15 | Register with a confirmation password that does not match | Registration is rejected with a mismatch message. |
+| AT-16 | Log in to an account whose email has not been verified | Login is rejected with a message and an option to resend the verification email. |
+| AT-17 | Open the verification link from the email | The email address is verified and the user can log in. |
+| AT-18 | Request a new verification email | A new link is sent and earlier links no longer work. |
+| AT-19 | Enter an incorrect password 3 times in a row | The account is locked for 24 hours and the correct password is rejected during that time. |
+| AT-20 | Use "Forgot password" and open the reset link | The user can set a new password that meets the requirements and log in with it; the old password no longer works. |
 
 We will test both applications using the same starting conditions and document the results.
 
@@ -101,7 +110,7 @@ We will evaluate both versions using a shared scoring system.
 
 | Criterion | Weight | Evaluation Method |
 |---|---:|---|
-| Functionality | 30% | Percentage of the 13 acceptance tests passed. |
+| Functionality | 30% | Percentage of the 20 acceptance tests passed. |
 | Security | 20% | Review authentication, private data protection, and identified security issues using the same checklist. |
 | Maintainability | 20% | Review code organization and measure the effort required to make the same small change in each build. |
 | Development Effort | 15% | Compare human development hours and the number of AI corrections required. |
@@ -205,6 +214,8 @@ For testing, we will use fictional or non-sensitive information.
 
 We will not commit passwords, API keys, or private credentials to GitHub.
 
+Verification and password reset emails will be sent through a free SMTP account. Email account credentials will be kept only in local environment files that are excluded from the repository. We will not use a paid email service unless we both approve the cost.
+
 Our application will require persistent storage for user accounts, scores, and progress. We will restrict access to private user information.
 
 ## 12. Contract Changes
@@ -227,3 +238,4 @@ We will use GitHub pull requests to preserve a reviewable history of changes.
 |---|---|---|---|
 | 0.1 | November 18, 2026 | Ezana & Uchenna| Created initial Bake-off contract with shared requirements, roles, fairness rules, acceptance tests, and evaluation criteria. |
 | 0.2 | November 18, 2026 | Ezana & Uchenna| Clarified partner responsibilities and AI oversight, aligned acceptance tests with the revised specification, expanded repository workflow, added contract-compliance checks, and clarified the comparison and decision-making process following Adam and Ryan's peer review. |
+| 0.3 | November 23, 2026 | Uchenna (draft for team review) | Added email verification to F1, a new F9 for password requirements and verified-only login, and a new F10 for login lockout and password reset. Updated AT-01 and AT-03, added AT-14 to AT-20, and changed the Functionality criterion from 13 to 20 acceptance tests. Added the free SMTP email approach to Costs and Data. Requires Ezana's approval. |

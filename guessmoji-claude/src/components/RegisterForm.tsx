@@ -1,21 +1,25 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { register } from "@/lib/auth/client";
-import { PASSWORD_MIN_LENGTH, validateRegistration } from "@/lib/validation";
+import { validateRegistration } from "@/lib/validation";
 import { Button } from "./Button";
 import { FormAlert } from "./FormAlert";
+import { PasswordRequirements } from "./PasswordRequirements";
 import { TextField } from "./TextField";
 import { useAuthForm } from "./useAuthForm";
 import styles from "./AuthForm.module.css";
 
+const REQUIREMENTS_ID = "password-requirements";
+
 export function RegisterForm() {
   const router = useRouter();
-  const { formRef, field, formError, submitting, onSubmit } = useAuthForm({
+  const { formRef, field, values, formError, submitting, onSubmit } = useAuthForm({
     initialValues: { email: "", password: "", confirmPassword: "" },
     validate: validateRegistration,
     submit: ({ email, password }) => register({ email, password }),
-    onSuccess: () => router.push("/login?registered=1"),
+    onSuccess: () => router.push("/register/check-email"),
   });
 
   return (
@@ -28,7 +32,7 @@ export function RegisterForm() {
     >
       {formError && <FormAlert tone="error">{formError}</FormAlert>}
       <TextField
-        label="Email"
+        label="Email Address"
         type="email"
         autoComplete="email"
         inputMode="email"
@@ -40,13 +44,15 @@ export function RegisterForm() {
         label="Password"
         type="password"
         autoComplete="new-password"
-        hint={`At least ${PASSWORD_MIN_LENGTH} characters, with a letter and a number.`}
         required
         revealable
+        describedById={REQUIREMENTS_ID}
         {...field("password")}
-      />
+      >
+        <PasswordRequirements id={REQUIREMENTS_ID} password={values.password} />
+      </TextField>
       <TextField
-        label="Confirm password"
+        label="Confirm Password"
         type="password"
         autoComplete="new-password"
         required
@@ -56,6 +62,9 @@ export function RegisterForm() {
       <Button type="submit" fullWidth loading={submitting} loadingText="Creating account…">
         Create Account
       </Button>
+      <p className={styles.alt}>
+        Already have an account? <Link href="/login">Back to log in</Link>
+      </p>
     </form>
   );
 }

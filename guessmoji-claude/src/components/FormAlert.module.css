@@ -7,3 +7,4 @@
 }
 .error { background: var(--danger-soft); border-color: var(--danger); color: var(--danger-text); }
 .success { background: var(--success-soft); border-color: var(--success); color: var(--success-text); }
+.alert a { color: inherit; font-weight: 700; }

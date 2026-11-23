@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { AuthCard } from "@/components/AuthCard";
 import { AuthPageShell } from "@/components/AuthPageShell";
 import { RegisterForm } from "@/components/RegisterForm";
@@ -13,12 +12,7 @@ export default function RegisterPage() {
         eyebrow="New player"
         title="Create a new account"
         titleId="register-title"
-        description="We only ask for an email and password."
-        footer={
-          <>
-            Already have an account? <Link href="/login">Log in</Link>
-          </>
-        }
+        description="We only ask for an email and password. We'll send you a link to verify your email."
       >
         <RegisterForm />
       </AuthCard>

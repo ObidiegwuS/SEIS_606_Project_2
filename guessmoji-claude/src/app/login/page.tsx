@@ -7,10 +7,10 @@ import { safeRedirectPath } from "@/lib/validation";
 
 export const metadata: Metadata = { title: "Log in" };
 
-type Props = { searchParams: Promise<{ next?: string; registered?: string }> };
+type Props = { searchParams: Promise<{ next?: string; verified?: string; reset?: string }> };
 
 export default async function LoginPage({ searchParams }: Props) {
-  const { next, registered } = await searchParams;
+  const { next, verified, reset } = await searchParams;
   return (
     <AuthPageShell>
       <AuthCard
@@ -26,7 +26,13 @@ export default async function LoginPage({ searchParams }: Props) {
       >
         <LoginForm
           redirectTo={safeRedirectPath(next)}
-          notice={registered === "1" ? "Account created. Log in to start playing." : undefined}
+          notice={
+            reset === "1"
+              ? "Password updated. Log in with your new password."
+              : verified === "1"
+                ? "Email verified. Log in to start playing."
+                : undefined
+          }
         />
       </AuthCard>
     </AuthPageShell>
