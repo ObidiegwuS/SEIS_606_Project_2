@@ -1,12 +1,13 @@
 /**
- * Server-only session lookup. Do not import from client components.
+ * Server-only session lookup for Server Components and Server Actions.
+ * Do not import from client components.
  */
 import "server-only";
 import { cookies } from "next/headers";
-import { findSessionUser } from "@/server/sessions";
+import { findSessionUser, type SessionUser } from "@/server/sessions";
 import { SESSION_COOKIE } from "./constants";
 
-export type SessionUser = { id: string; email: string };
+export type { SessionUser };
 
 /**
  * Returns the logged-in user, or null if there is no valid session.

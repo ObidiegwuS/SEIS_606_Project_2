@@ -1,0 +1,77 @@
+.board { display: flex; flex-direction: column; gap: 1rem; }
+.meta { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; color: var(--text-muted); font-weight: 600; }
+.meta p { margin: 0; }
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.clueLabel {
+  margin: 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.emojis {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(3rem, 14vw, 4.5rem);
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  overflow-wrap: anywhere;
+}
+.form { display: flex; flex-direction: column; gap: 0.875rem; }
+.solved { margin: 0; text-align: center; font-size: 1.05rem; }
+.badge {
+  display: inline-block;
+  margin-right: 0.375rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: 999px;
+  background: var(--success-soft);
+  color: var(--success-text);
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.hintBox { display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
+.hintToggle {
+  min-height: 44px;
+  padding: 0 1rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hintToggle:hover { background: var(--accent-soft); }
+.hint {
+  margin: 0;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-tint);
+  border: 1px solid var(--border);
+}
+.nav { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  background: var(--success-soft);
+  border: 1px solid var(--success);
+  text-align: center;
+}
+.completeTitle { margin: 0; font-weight: 700; color: var(--success-text); }
+.points { margin: 0; text-align: center; color: var(--text-muted); font-size: 0.9rem; }

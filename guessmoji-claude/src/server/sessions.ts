@@ -19,16 +19,21 @@ export function createSession(userId: string, now = Date.now()) {
   return { token, expiresAt };
 }
 
-/** Returns the session's user if the session is live and the user's email is verified. */
-export function findSessionUser(token: string, now = Date.now()): { id: string; email: string } | null {
+export type SessionUser = { id: string; email: string; emailVerified: true; createdAt: string };
+
+/**
+ * Returns the session's user only if the session exists, has not expired,
+ * and belongs to an account whose email is verified. Anything else is null.
+ */
+export function findSessionUser(token: string, now = Date.now()): SessionUser | null {
   if (!token) return null;
   const row = getDb()
     .prepare(
-      `SELECT u.id, u.email FROM sessions s JOIN users u ON u.id = s.user_id
+      `SELECT u.id, u.email, u.created_at FROM sessions s JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = ? AND s.expires_at > ? AND u.email_verified = 1`,
     )
-    .get(hashToken(token), now) as { id: string; email: string } | undefined;
-  return row ? { id: row.id, email: row.email } : null;
+    .get(hashToken(token), now) as { id: string; email: string; created_at: string } | undefined;
+  return row ? { id: row.id, email: row.email, emailVerified: true, createdAt: row.created_at } : null;
 }
 
 export function deleteSession(token: string) {

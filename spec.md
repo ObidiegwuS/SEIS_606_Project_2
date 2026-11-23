@@ -3,7 +3,7 @@
 **Course:** SEIS 606 – Vibe Coding  
 **Project:** Project 2  
 **Team Members:** Ezana Asfaw and Uchenna Obidiegwu  
-**Version:** 0.3 – Proposed Update (pending team review)  
+**Version:** 0.4 – Proposed Update (pending team review; builds on v0.3, also pending)  
 **Date:** November 23, 2026
 
 ## 1. Project Overview
@@ -74,9 +74,19 @@ These rules apply to registration, email verification, and login in both version
 17. The new password must meet the same password requirements as registration and be entered twice to confirm.
 18. Resetting the password ends all existing login sessions, lifts any login lockout, and marks the email address as verified, because the user has proven they control it.
 
+**Sessions and Protected Screens**
+
+19. The category selection screen, game screens, and game backend routes are available only to logged-in users whose email is verified. The server checks the login session on every request; checks in the browser alone are not enough.
+20. Users who are not logged in are redirected to the login page.
+21. Logging out ends the session on the server, clears it from the browser, and returns the user to the login page. The old session can no longer be used to open protected screens.
+
 ### Emoji Guessing Game
 
-- Users can choose between Movies and Countries.
+- After logging in, users see a category selection screen with two categories: Movies and Countries.
+- The Movies card shows a movie-related visual, the name "Movies", the description "Guess the movie title using emojis.", and a "Play Movies" button.
+- The Countries card shows a globe, map, or travel visual, the name "Countries", the description "Guess the country using emojis.", and a "Play Countries" button.
+- Each category opens its own game and uses its own separate puzzle collection.
+- Game screens provide a way to return to category selection and a way to log out.
 - Each puzzle displays emojis representing a movie or country.
 - Users type their answers into a text field.
 - The application indicates whether an answer is correct or incorrect.
@@ -95,14 +105,26 @@ We will use consistent rules in both versions.
 
 1. Each puzzle displays an emoji clue.
 2. Players enter their answer and submit it.
-3. Capitalization and extra spaces will not affect whether an answer is correct.
+3. Capitalization, extra spaces, punctuation, and accents will not affect whether an answer is correct (for example, "spider man", "SPIDERMAN", and "Spider-Man" all match).
 4. Common alternative names and spellings will be accepted when listed as valid answers.
 5. Blank answers will not be submitted.
 6. Incorrect answers will display a message without awarding points.
 7. Players cannot receive duplicate points for a completed puzzle.
 8. Each puzzle will have a text hint to help players understand unclear emojis.
+9. Solving a puzzle for the first time earns 10 points.
+10. Using a hint does not reduce the points earned.
+11. A puzzle's answer is not shown to the player until they solve it. Answers are checked on the server.
 
 We will use a shared list of puzzles and accepted answers so that both applications are evaluated fairly.
+
+### Proposed Shared Puzzle Dataset (draft)
+
+Uchenna has proposed a starter dataset of 10 movie puzzles and 10 country puzzles, stored as plain JSON so either build can use it:
+
+- `guessmoji-claude/src/data/puzzles/movies.json`
+- `guessmoji-claude/src/data/puzzles/countries.json`
+
+Each puzzle has an `id`, the `emojis` clue, the main `answer`, a list of `accepted` alternative names, and a text `hint`. The dataset is a draft until both partners agree on it. Puzzles use only emoji and text, with no posters, logos, or other copyrighted images.
 
 ## 5. Acceptance Tests
 
@@ -131,6 +153,30 @@ We will use a shared list of puzzles and accepted answers so that both applicati
 
 We will use these tests during development and when comparing our two applications.
 
+### Supporting Authentication Test Checklist
+
+To verify the account rules in detail, each build should also pass the checks below. They support the acceptance tests above and are **not scored separately**.
+
+| Check | Related tests or rules |
+|---|---|
+| Successful registration | AT-01 |
+| Invalid email format | Account Rule 2 |
+| Duplicate email address | AT-02 |
+| Password shorter than 7 characters | AT-14 |
+| Password missing an uppercase letter | AT-14 |
+| Password missing a lowercase letter | AT-14 |
+| Password missing a special character | AT-14 |
+| Password confirmation mismatch | AT-15 |
+| Successful email verification | AT-17 |
+| Invalid verification link | Account Rule 10 |
+| Expired verification link | Account Rule 10 |
+| Reused verification link | Account Rule 10 |
+| Successful login | AT-03 |
+| Incorrect password | AT-04 |
+| Unverified account login attempt | AT-16 |
+| Successful logout | Account Rule 21, AT-12 |
+| Opening the category screen without logging in | Account Rules 19–20 |
+
 ## 6. Data Requirements
 
 Our application will need to store:
@@ -142,7 +188,7 @@ Our application will need to store:
 - Password reset links.
 - Emoji puzzles and accepted answers.
 - Scores.
-- Completed puzzles and player progress.
+- Completed puzzles and player progress, recorded so that each puzzle can award points to a player only once.
 
 We will store user progress persistently rather than only in the browser.
 
@@ -207,5 +253,6 @@ We also clarified that each of us will review our own AI-generated application a
 | 0.1 | November 18, 2026 | Ezana Asfaw | Created the initial specification draft with core features, game rules, and acceptance tests. |
 | 0.2 | November 18, 2026 | Ezana Asfaw (draft for team review) | Added the full Risks & Governance table, clarified responsibilities and AI oversight, expanded acceptance tests for edge cases and security, and updated data requirements following peer review. |
 | 0.3 | November 23, 2026 | Uchenna Obidiegwu (draft for team review) | Added Account Rules for password requirements, email verification, resending verification emails, and blocking unverified accounts from logging in. Added login lockout after 3 failed attempts and a forgot-password option. Updated AT-01 and AT-03, added AT-14 to AT-20, and added verification, session, lockout, and password reset data to the data requirements. |
+| 0.4 | November 23, 2026 | Uchenna Obidiegwu (draft for team review) | Added Account Rules 19–21 for protected screens, server-side session checks, and logout. Described the category selection screen and separate puzzle collections. Extended answer matching to ignore punctuation and accents, and added game rules 9–11 (10 points per puzzle, free hints, answers hidden until solved). Added the proposed draft puzzle dataset and a supporting authentication test checklist that is not scored separately. No acceptance tests or evaluation weights changed. |
 
 We will review these proposed revisions together before finalizing the specification.

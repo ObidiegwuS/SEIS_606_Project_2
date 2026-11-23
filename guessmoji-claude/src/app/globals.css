@@ -22,6 +22,8 @@
   --success-text: #176a45;
   --success-soft: #e6f6ee;
   --shadow: 0 1px 2px rgba(28, 24, 48, 0.04), 0 8px 24px rgba(28, 24, 48, 0.06);
+  --movies-tint: #ffe3d6;
+  --countries-tint: #d8f3ea;
   --radius-sm: 10px;
   --radius-lg: 20px;
 }
@@ -51,6 +53,8 @@
     --success-text: #7fdcb1;
     --success-soft: #12301f;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.3);
+    --movies-tint: #3a2230;
+    --countries-tint: #173a33;
   }
 }
 

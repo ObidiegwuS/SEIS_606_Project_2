@@ -43,6 +43,16 @@ const SCHEMA = `
     used_at    INTEGER
   );
   CREATE INDEX IF NOT EXISTS idx_prt_user ON password_reset_tokens(user_id);
+
+  -- One row per puzzle a player has solved. The primary key makes duplicate points impossible.
+  CREATE TABLE IF NOT EXISTS puzzle_completions (
+    user_id      TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    puzzle_id    TEXT NOT NULL,
+    category     TEXT NOT NULL,
+    points       INTEGER NOT NULL,
+    completed_at INTEGER NOT NULL,
+    PRIMARY KEY (user_id, puzzle_id)
+  );
 `;
 
 // Cache on globalThis so dev-mode hot reloads don't open a new handle each time.

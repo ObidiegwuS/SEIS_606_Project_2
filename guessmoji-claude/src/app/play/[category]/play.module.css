@@ -1,0 +1,14 @@
+.shell { min-height: 100dvh; display: flex; flex-direction: column; }
+.main {
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem) 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.heading { text-align: center; display: grid; gap: 0.25rem; }
+.visual { margin: 0; font-size: 2rem; letter-spacing: 0.08em; }
+.title { margin: 0; font-size: clamp(1.75rem, 5vw, 2.25rem); letter-spacing: -0.02em; }
+.description { margin: 0; color: var(--text-muted); }

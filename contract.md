@@ -4,7 +4,7 @@
 **Project:** Project 2  
 **Team Members:** Ezana Asfaw and Uchenna Obidiegwu  
 **Project Approach:** Platform Bake-off  
-**Version:** 0.3 – Proposed Update (pending team review)  
+**Version:** 0.4 – Proposed Update (pending team review; builds on v0.3, also pending)  
 **Date:** November 23, 2026
 
 ## 1. Project Overview
@@ -38,7 +38,7 @@ Both versions must follow the same specification.
 | ID | Required Feature |
 |---|---|
 | F1 | Users can register, verify their email address, log in, and log out. |
-| F2 | Users can select Movies or Countries. |
+| F2 | After logging in, users select Movies or Countries from a category selection screen. Each category uses its own separate puzzle collection. |
 | F3 | The game displays emoji clues for players to solve. |
 | F4 | Users can enter and submit answers. |
 | F5 | Correct and incorrect answers produce appropriate feedback. |
@@ -47,6 +47,7 @@ Both versions must follow the same specification.
 | F8 | Players can use text hints for unclear puzzles. |
 | F9 | Registration enforces the shared password requirements, and only accounts with a verified email address can log in. |
 | F10 | Accounts are locked for 24 hours after 3 failed login attempts, and users can reset a forgotten password by email. |
+| F11 | Category selection and game screens are available only to logged-in, verified users, checked on the server. Logging out ends the session on the server. |
 
 Both applications must also follow the account rules, answer-validation rules, and data requirements described in `spec.md`.
 
@@ -72,6 +73,8 @@ We want our comparison to be fair and consistent.
 - Development prompts and workflows.
 
 We will agree on the shared puzzle dataset and time budget before comparing our builds.
+
+Uchenna has proposed a draft dataset of 10 movie and 10 country puzzles in plain JSON (see `spec.md`, section 4), along with shared scoring rules: 10 points per puzzle solved, free hints, and answer matching that ignores capitalization, spaces, punctuation, and accents. Both builds will use the agreed dataset and rules once we approve them.
 
 We will also record our development time and major AI-generated errors requiring correction.
 
@@ -110,7 +113,7 @@ We will evaluate both versions using a shared scoring system.
 
 | Criterion | Weight | Evaluation Method |
 |---|---:|---|
-| Functionality | 30% | Percentage of the 20 acceptance tests passed. |
+| Functionality | 30% | Percentage of the 20 acceptance tests passed. The supporting authentication test checklist in `spec.md` is not scored separately. |
 | Security | 20% | Review authentication, private data protection, and identified security issues using the same checklist. |
 | Maintainability | 20% | Review code organization and measure the effort required to make the same small change in each build. |
 | Development Effort | 15% | Compare human development hours and the number of AI corrections required. |
@@ -239,3 +242,4 @@ We will use GitHub pull requests to preserve a reviewable history of changes.
 | 0.1 | November 18, 2026 | Ezana & Uchenna| Created initial Bake-off contract with shared requirements, roles, fairness rules, acceptance tests, and evaluation criteria. |
 | 0.2 | November 18, 2026 | Ezana & Uchenna| Clarified partner responsibilities and AI oversight, aligned acceptance tests with the revised specification, expanded repository workflow, added contract-compliance checks, and clarified the comparison and decision-making process following Adam and Ryan's peer review. |
 | 0.3 | November 23, 2026 | Uchenna (draft for team review) | Added email verification to F1, a new F9 for password requirements and verified-only login, and a new F10 for login lockout and password reset. Updated AT-01 and AT-03, added AT-14 to AT-20, and changed the Functionality criterion from 13 to 20 acceptance tests. Added the free SMTP email approach to Costs and Data. Requires Ezana's approval. |
+| 0.4 | November 23, 2026 | Uchenna (draft for team review) | Expanded F2 to cover the category selection screen and separate puzzle collections, and added F11 for protected screens and logout. Added the proposed draft puzzle dataset and shared scoring rules to the fairness rules. Clarified that the supporting authentication test checklist is not scored separately. No acceptance tests or evaluation weights changed. Requires Ezana's approval. |

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import styles from "./Button.module.css";
 
 type Variant = "primary" | "secondary";
@@ -15,18 +15,13 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   loadingText?: string;
 };
 
-export function Button({
-  variant = "primary",
-  fullWidth,
-  loading,
-  loadingText,
-  children,
-  disabled,
-  type = "button",
-  ...rest
-}: ButtonProps) {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { variant = "primary", fullWidth, loading, loadingText, children, disabled, type = "button", ...rest },
+  ref,
+) {
   return (
     <button
+      ref={ref}
       type={type}
       className={classes(variant, fullWidth)}
       disabled={disabled || loading}
@@ -36,7 +31,7 @@ export function Button({
       {loading ? (loadingText ?? children) : children}
     </button>
   );
-}
+});
 
 type ButtonLinkProps = {
   href: string;

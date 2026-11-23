@@ -16,4 +16,4 @@ export function proxy(request: NextRequest) {
 }
 
 // Keep in sync with PROTECTED_PATHS in src/lib/auth/constants.ts.
-export const config = { matcher: ["/home/:path*"] };
+export const config = { matcher: ["/home/:path*", "/play/:path*"] };

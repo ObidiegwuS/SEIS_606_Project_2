@@ -1,0 +1,53 @@
+.shell { min-height: 100dvh; display: flex; flex-direction: column; }
+.main {
+  width: 100%;
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: clamp(1.75rem, 5vw, 3rem) 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+.intro { text-align: center; display: flex; flex-direction: column; gap: 0.375rem; }
+.welcome { margin: 0; color: var(--text-muted); overflow-wrap: anywhere; }
+.welcome strong { color: var(--text); }
+.title { margin: 0; font-size: clamp(1.75rem, 5vw, 2.5rem); letter-spacing: -0.02em; }
+.subtitle { margin: 0; color: var(--text-muted); }
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+@media (min-width: 640px) { .grid { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
+.grid > li { display: flex; min-width: 0; }
+
+.card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  text-align: center;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(28, 24, 48, 0.06), 0 16px 32px rgba(28, 24, 48, 0.1); }
+.movies { background: linear-gradient(160deg, var(--surface) 55%, var(--movies-tint)); }
+.countries { background: linear-gradient(160deg, var(--surface) 55%, var(--countries-tint)); }
+
+.visual { margin: 0; font-size: clamp(3rem, 10vw, 4.5rem); line-height: 1.1; letter-spacing: 0.08em; }
+.cardTitle { margin: 0; font-size: 1.75rem; letter-spacing: -0.01em; }
+.description { margin: 0; color: var(--text-muted); font-size: 1.05rem; }
+
+.progress { width: 100%; margin-top: auto; padding-top: 0.5rem; display: grid; gap: 0.375rem; }
+.bar { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
+.bar span { display: block; height: 100%; background: var(--success); border-radius: inherit; }
+.progressText { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
