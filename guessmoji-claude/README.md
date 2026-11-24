@@ -153,3 +153,77 @@ field errors are shown under the matching input.
 | `APP_URL` | Base URL used in verification links. **Required in production** (the request Host header is not trusted). |
 | `DATABASE_PATH` | SQLite file path (default `./data/guessmoji.db`). |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | SMTP server for verification emails. Required in production. |
+
+## Public demo link (free hosting)
+
+The class demo is served from a team member's laptop through a free
+[Cloudflare quick tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/).
+No Cloudflare account, credit card or code changes are needed, and the data stays in the local SQLite file.
+Deploying requires approval from both team members (AGENTS.md §3).
+
+**Limits:** the link only works while the laptop is awake and both the server and the tunnel are
+running, and a quick tunnel gets a **new address every time it starts**. Keep the local version
+(`npm run dev`) ready as a backup demo.
+
+### 1. One-time setup
+
+1. **Install `cloudflared`** (Apple Silicon Mac shown; use `darwin-amd64` on Intel):
+
+   ```bash
+   mkdir -p ~/.local/bin && cd "$(mktemp -d)"
+   curl -fsSL -o cf.tgz https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-arm64.tgz
+   tar -xzf cf.tgz && mv cloudflared ~/.local/bin/ && chmod +x ~/.local/bin/cloudflared
+   ~/.local/bin/cloudflared --version
+   ```
+
+   With Homebrew, `brew install cloudflared` works too.
+
+2. **Create a Gmail app password** for the project Gmail account (use a project account, not a
+   personal one; school/work accounts often block app passwords):
+   1. Turn on 2-Step Verification at <https://myaccount.google.com/signinoptions/twosv>.
+   2. Open <https://myaccount.google.com/apppasswords> (type the address; it is hidden from the menus).
+   3. Create one named `GuessMoji` and copy the 16-character code. Google shows it only once.
+
+   No Gmail? [Brevo](https://www.brevo.com)'s free plan (no card) works too: use
+   `SMTP_HOST=smtp-relay.brevo.com` and the SMTP login and key from **SMTP & API**.
+
+3. **Create `.env.local`** from `.env.example` and fill in the SMTP settings. `.env.local` is
+   git-ignored. Never commit it or paste the app password into chats, issues or pull requests.
+
+### 2. Each time you start the demo
+
+Use three Terminal windows:
+
+```bash
+# Window 1 — start the tunnel and note the https://<random-words>.trycloudflare.com address it prints
+~/.local/bin/cloudflared tunnel --no-autoupdate --url http://localhost:3000
+
+# Then set APP_URL in .env.local to that address (email links use it), e.g.
+# APP_URL=https://<random-words>.trycloudflare.com
+
+# Window 2 — build and start GuessMoji in production mode
+npm run build
+npm run start -- -p 3000
+
+# Window 3 — keep the laptop awake while the demo is live (Ctrl+C to stop)
+caffeinate -d
+```
+
+`npm run build` is only needed after code changes. If you change `APP_URL`, stop and restart
+`npm run start` so it picks up the new address.
+
+### 3. Check it works
+
+1. Open the public address. The landing page loads, and `/home` redirects to the login page.
+2. Register with a test address (Gmail `+` aliases such as `project+test@gmail.com` reach the same inbox).
+3. Open the verification email and confirm its link starts with the public address, not `localhost`.
+4. Log in, solve a puzzle and check the score updates.
+
+**Troubleshooting**
+
+| Problem | Fix |
+|---|---|
+| Registration says the email could not be sent | Check `SMTP_USER` / `SMTP_PASS` in `.env.local`, then restart the server. |
+| Email links point to an old or `localhost` address | Update `APP_URL` to the current tunnel address and restart the server. |
+| Public address shows a Cloudflare error page | The server on port 3000 isn't running. Start it with `npm run start -- -p 3000`. |
+| The link stopped working | The laptop slept or the tunnel stopped. Restart it, update `APP_URL`, and share the new link. |
