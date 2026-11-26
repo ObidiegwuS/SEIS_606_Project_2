@@ -156,29 +156,53 @@ field errors are shown under the matching input.
 
 ## Public demo link (free hosting)
 
-The class demo is served from a team member's laptop through a free
-[Cloudflare quick tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/do-more-with-tunnels/trycloudflare/).
-No Cloudflare account, credit card or code changes are needed, and the data stays in the local SQLite file.
-Deploying requires approval from both team members (AGENTS.md §3).
+**Live link:** <https://neutron-kissable-sketch.ngrok-free.dev>
 
-**Limits:** the link only works while the laptop is awake and both the server and the tunnel are
-running, and a quick tunnel gets a **new address every time it starts**. Keep the local version
-(`npm run dev`) ready as a backup demo.
+The demo runs on a team member's Mac and is published through a free
+[ngrok](https://ngrok.com) account with one permanent free domain. No credit card, paid plan or
+code changes are needed, and the data stays in the local SQLite file. Deploying requires approval
+from both team members (AGENTS.md §3).
+
+[`scripts/public-demo.sh`](scripts/public-demo.sh) installs three macOS background services
+(launchd LaunchAgents) that start at login and restart themselves if they stop. They keep running
+after the terminal or editor is closed.
+
+| Service | What it does |
+|---|---|
+| `com.guessmoji.server` | Runs the production build on `127.0.0.1:3000` (not reachable from other devices directly) |
+| `com.guessmoji.tunnel` | ngrok, which connects the permanent domain to the server |
+| `com.guessmoji.awake` | `caffeinate -i`, which stops the Mac from going to sleep when idle |
+
+**Limits:**
+- The link only works while the Mac is on and its owner is logged in. Closing the lid on battery
+  power puts it to sleep and takes the link down until it wakes.
+- On the free plan, ngrok shows visitors a one-time notice page with a **Visit Site** button
+  before GuessMoji opens. Tell graders to click it.
+- Keep the local version (`npm run dev`) ready as a backup demo.
 
 ### 1. One-time setup
 
-1. **Install `cloudflared`** (Apple Silicon Mac shown; use `darwin-amd64` on Intel):
+1. **Install ngrok** (Apple Silicon Mac shown; use `darwin-amd64` on Intel):
 
    ```bash
    mkdir -p ~/.local/bin && cd "$(mktemp -d)"
-   curl -fsSL -o cf.tgz https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-darwin-arm64.tgz
-   tar -xzf cf.tgz && mv cloudflared ~/.local/bin/ && chmod +x ~/.local/bin/cloudflared
-   ~/.local/bin/cloudflared --version
+   curl -fsSL -o ngrok.zip https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-darwin-arm64.zip
+   unzip -q ngrok.zip && mv ngrok ~/.local/bin/ && ~/.local/bin/ngrok version
    ```
 
-   With Homebrew, `brew install cloudflared` works too.
+2. **Create a free ngrok account** at <https://dashboard.ngrok.com/signup> (no card).
+   - Copy your token from **Your Authtoken**, then save it. Paste it **once**; a double paste
+     gives `ERR_NGROK_105`:
 
-2. **Create a Gmail app password** for the project Gmail account (use a project account, not a
+     ```bash
+     ~/.local/bin/ngrok config add-authtoken YOUR_TOKEN
+     ```
+
+     The token is stored in ngrok's own settings, outside the project. Never commit it or paste it
+     into chats, issues or pull requests.
+   - Claim your free domain under **Domains** (for example `something.ngrok-free.dev`).
+
+3. **Create a Gmail app password** for the project Gmail account (use a project account, not a
    personal one; school/work accounts often block app passwords):
    1. Turn on 2-Step Verification at <https://myaccount.google.com/signinoptions/twosv>.
    2. Open <https://myaccount.google.com/apppasswords> (type the address; it is hidden from the menus).
@@ -187,34 +211,31 @@ running, and a quick tunnel gets a **new address every time it starts**. Keep th
    No Gmail? [Brevo](https://www.brevo.com)'s free plan (no card) works too: use
    `SMTP_HOST=smtp-relay.brevo.com` and the SMTP login and key from **SMTP & API**.
 
-3. **Create `.env.local`** from `.env.example` and fill in the SMTP settings. `.env.local` is
-   git-ignored. Never commit it or paste the app password into chats, issues or pull requests.
+4. **Create `.env.local`** from `.env.example`. Fill in the SMTP settings and set
+   `APP_URL=https://<your-domain>` so email links point to the public address. `.env.local` is
+   git-ignored.
 
-### 2. Each time you start the demo
+5. **Build and install the services:**
 
-Use three Terminal windows:
+   ```bash
+   npm run build
+   scripts/public-demo.sh install <your-domain>.ngrok-free.dev
+   ```
 
-```bash
-# Window 1 — start the tunnel and note the https://<random-words>.trycloudflare.com address it prints
-~/.local/bin/cloudflared tunnel --no-autoupdate --url http://localhost:3000
+### 2. Day-to-day
 
-# Then set APP_URL in .env.local to that address (email links use it), e.g.
-# APP_URL=https://<random-words>.trycloudflare.com
-
-# Window 2 — build and start GuessMoji in production mode
-npm run build
-npm run start -- -p 3000
-
-# Window 3 — keep the laptop awake while the demo is live (Ctrl+C to stop)
-caffeinate -d
-```
-
-`npm run build` is only needed after code changes. If you change `APP_URL`, stop and restart
-`npm run start` so it picks up the new address.
+| Task | Command |
+|---|---|
+| Check the services and the public link | `scripts/public-demo.sh status` |
+| Deploy code changes | `npm run build && scripts/public-demo.sh restart` |
+| Pick up a changed `.env.local` | `scripts/public-demo.sh restart` |
+| Take the demo offline | `scripts/public-demo.sh uninstall` |
+| Read the logs | `~/Library/Logs/GuessMoji/` (`server.log`, `tunnel.log`) |
 
 ### 3. Check it works
 
-1. Open the public address. The landing page loads, and `/home` redirects to the login page.
+1. Open the public link and click **Visit Site** on the ngrok notice. The landing page loads, and
+   `/home` redirects to the login page.
 2. Register with a test address (Gmail `+` aliases such as `project+test@gmail.com` reach the same inbox).
 3. Open the verification email and confirm its link starts with the public address, not `localhost`.
 4. Log in, solve a puzzle and check the score updates.
@@ -223,7 +244,9 @@ caffeinate -d
 
 | Problem | Fix |
 |---|---|
-| Registration says the email could not be sent | Check `SMTP_USER` / `SMTP_PASS` in `.env.local`, then restart the server. |
-| Email links point to an old or `localhost` address | Update `APP_URL` to the current tunnel address and restart the server. |
-| Public address shows a Cloudflare error page | The server on port 3000 isn't running. Start it with `npm run start -- -p 3000`. |
-| The link stopped working | The laptop slept or the tunnel stopped. Restart it, update `APP_URL`, and share the new link. |
+| ngrok page says the endpoint is offline (`ERR_NGROK_3200`) | The tunnel isn't running. Run `status`, then check `tunnel.log`. |
+| `tunnel.log` shows `ERR_NGROK_105` | The authtoken is wrong. Save it again with `ngrok config add-authtoken`, then `launchctl kickstart -k gui/$(id -u)/com.guessmoji.tunnel`. |
+| ngrok page shows a connection error (`ERR_NGROK_8012`) | The server isn't running. Check `server.log`; run `npm run build` if the build is missing. |
+| Registration says the email could not be sent | Check `SMTP_USER` / `SMTP_PASS` in `.env.local`, then `scripts/public-demo.sh restart`. |
+| Email links point to `localhost` or another address | Fix `APP_URL` in `.env.local`, then `scripts/public-demo.sh restart`. |
+| The link stopped working | The Mac slept, shut down or logged out. Wake it or log in; the services start again on their own. |
